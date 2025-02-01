@@ -10,14 +10,6 @@
       </template>
     </navigation>
     <b-container fluid>
-      <b-row>
-        <b-col>
-          <p class="mt-3">
-            The home of JSON Schema validation right in your browser 🚧 Alpha 🚧 draft-7 only
-          </p>
-        </b-col>
-      </b-row>
-
       <b-row v-if="errorMessage !== null" align-h="center">
         <b-col>
           <b-alert variant="danger" show dismissible @dismissed="clearError">
@@ -41,15 +33,27 @@
         />
       </b-collapse>
 
-      <b-row v-if="!firstEvaluation && !loadingData" align-h="center" justify-content-md-center>
+      <b-row
+        v-if="!firstEvaluation && !loadingData"
+        align-h="center"
+        justify-content-md-center
+      >
         <b-col lg="4" sm="6">
           <b-alert v-if="allJSONValid === false" show variant="danger">
             Invalid JSON. Scroll for errors.
           </b-alert>
-          <b-alert v-else-if="ajvSchemaError.length !== 0" show variant="danger">
+          <b-alert
+            v-else-if="ajvSchemaError.length !== 0"
+            show
+            variant="danger"
+          >
             JSON Schema invalid. Scroll for errors.
           </b-alert>
-          <b-alert v-else-if="ajvValidationSuccess === null" show variant="info">
+          <b-alert
+            v-else-if="ajvValidationSuccess === null"
+            show
+            variant="info"
+          >
             Checking validation
           </b-alert>
           <b-alert v-if="ajvValidationSuccess === true" show variant="success">
@@ -78,7 +82,9 @@
             file-name="schema.json"
             :json-text.sync="primarySchemaText"
             :theme="editorTheme"
-            @update-valid-status="updateJSONLintValid('primarySchemaText', $event)"
+            @update-valid-status="
+              updateJSONLintValid('primarySchemaText', $event)
+            "
           />
         </b-col>
         <b-col md="6">
@@ -114,7 +120,6 @@ import Navigation from './components/Navigation.vue';
 import Features from './components/Features.vue';
 import Settings from './components/Settings.vue';
 import Results from './components/Results.vue';
-import Footer from './components/Footer.vue';
 
 import shortner from './utilities/shortner.js';
 
@@ -147,7 +152,6 @@ export default {
     features: Features,
     settings: Settings,
     results: Results,
-    'footer-bar': Footer,
     loading: Loading,
   },
   data: function() {
@@ -209,7 +213,10 @@ export default {
         this.ajvValidationSuccess = null;
         this.validateIfPossible();
         const lintResults = Object.values(this.jsonLintValid);
-        if(lintResults.length === this.numberOfEditors && lintResults.every(v => v !== null)){
+        if (
+          lintResults.length === this.numberOfEditors &&
+          lintResults.every(v => v !== null)
+        ) {
           this.$set(this, 'firstEvaluation', false);
         }
       },
@@ -242,15 +249,17 @@ export default {
     dismissError() {
       Vue.set(this, 'errorMessage', null);
     },
-    loadFromUrl: async function (data) {
+    loadFromUrl: async function(data) {
       let json = tryParse(data);
 
-      if(!json) {
+      if (!json) {
         // Load from remote URL and try again...
-        const decodedData = await shortner.retrieveDataFromURL(data).catch((reason) =>{
-          Vue.set(this, 'errorMessage', reason.message);
-        });
-        if(!decodedData) {
+        const decodedData = await shortner
+          .retrieveDataFromURL(data)
+          .catch(reason => {
+            Vue.set(this, 'errorMessage', reason.message);
+          });
+        if (!decodedData) {
           return;
         }
         json = tryParse(decodedData);
@@ -263,7 +272,7 @@ export default {
         return;
       }
 
-      const {i, s} = json;
+      const { i, s } = json;
 
       if (i) {
         Vue.set(this, 'instanceText', i);
@@ -288,7 +297,7 @@ export default {
       }
     },
     validate: async function() {
-      if(this.loadingData){
+      if (this.loadingData) {
         return;
       }
       this.ajvValidationSuccess = null;
@@ -329,7 +338,7 @@ export default {
     },
     validateIfPossible: _.debounce(function() {
       if (this.allJSONValid) {
-      this.$set(this, 'checkingValidation', true);
+        this.$set(this, 'checkingValidation', true);
         this.validate();
       }
     }, 300),
@@ -339,12 +348,12 @@ export default {
     updateEditorTheme: function(theme) {
       Vue.set(this, 'editorTheme', theme);
     },
-    handleError: function (error) {
+    handleError: function(error) {
       Vue.set(this, 'errorMessage', error);
     },
     clearError: function() {
       Vue.set(this, 'errorMessage', null);
-    }
+    },
   },
 };
 </script>

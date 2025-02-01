@@ -147,7 +147,7 @@ export default {
     },
   },
   mounted: function() {
-    this.$refs.cm.codemirror.setSize('100%', '500px');
+    this.$refs.cm.codemirror.setSize('100%', '100%');
   },
   methods: {
     jsonlintCheck: function(cm, updateLinting) {
